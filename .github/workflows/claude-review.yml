@@ -1,0 +1,76 @@
+# .github/workflows/claude-review.yml
+#
+# Claude PR Code Review — triggered by @claude mentions in PR/issue comments
+# Requires: CLAUDE_CODE_OAUTH_TOKEN secret (Pro/Max) OR ANTHROPIC_API_KEY (API key)
+# Docs: https://code.claude.com/docs/en/github-actions
+
+name: Claude PR Review
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+# Only run when @claude is mentioned
+# This prevents the action from firing on every single comment
+jobs:
+  claude-review:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read          # Read repo files & diff
+      pull-requests: write    # Post review comments
+      issues: write           # Reply in issue threads
+      id-token: write         # OAuth token exchange (Pro/Max auth)
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # fetch-depth: 0 gives Claude the full git history for better context.
+          # Use fetch-depth: 1 to save minutes on large repos.
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          # --- Authentication (pick ONE) ---
+
+          # Option A: Pro/Max subscription (OAuth — no API costs)
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Option B: Direct API key (pay-per-token)
+          # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # --- Model ---
+          # claude-sonnet-4-6 is the right default for PR review.
+          # Upgrade to claude-opus-4-7 only for security-sensitive paths.
+          # model is passed via claude_args below.
+
+          # --- Review prompt ---
+          # Claude reads this when triggered. Tailor it to your team's standards.
+          prompt: |
+            You are a senior engineer performing a pull request code review.
+
+            Focus on:
+            - Correctness: logic errors, off-by-one, null/undefined, race conditions
+            - Security: injection, auth issues, secrets in code, insecure defaults
+            - Performance: N+1 queries, unnecessary re-renders, missing indexes
+            - Maintainability: naming clarity, duplication, missing tests, tech debt
+            - Style: adherence to the existing patterns in the codebase
+
+            Format your review as inline comments on specific lines where possible.
+            End with a short top-level summary (3–5 sentences max).
+            If the change looks good overall, say so clearly.
+            Do NOT suggest trivial nit-picks unless they affect readability significantly.
+
+          # --- Safety guardrails ---
+          claude_args: |
+            --max-turns 8
+            --model claude-sonnet-4-6
+            --allowedTools "mcp__github__create_pull_request_review,mcp__github__create_review_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*)"
