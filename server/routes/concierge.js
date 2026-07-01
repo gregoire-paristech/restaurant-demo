@@ -73,6 +73,15 @@ const RECOMMEND_TOOL = {
  */
 router.post("/", async (req, res, next) => {
   try {
+    // En environnement serverless, localhost n'est pas accessible
+    const baseURL = process.env.LLM_BASE_URL ?? "http://localhost:11434/v1";
+    if (process.env.VERCEL && (baseURL.includes("localhost") || baseURL.includes("127.0.0.1"))) {
+      return res.status(503).json({
+        error: "Le Concierge IA n'est pas encore configuré sur ce serveur. Configure LLM_BASE_URL dans les variables d'environnement Vercel.",
+        code: "llm_not_configured",
+      });
+    }
+
     const { prompt } = req.body;
 
     if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
