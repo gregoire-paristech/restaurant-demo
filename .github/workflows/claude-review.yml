@@ -37,11 +37,8 @@ jobs:
           # Use fetch-depth: 1 to save minutes on large repos.
           fetch-depth: 0
 
-      - uses: anthropics/claude-code-action@beta
+      - uses: anthropics/claude-code-action@v1
         with:
-          # Disable branch creation — comment-only mode
-          create_pull_request: false
-
           # --- Authentication (pick ONE) ---
 
           # Option A: Pro/Max subscription (OAuth — no API costs)
