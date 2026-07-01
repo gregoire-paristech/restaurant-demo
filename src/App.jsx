@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { dishes, deliveryInfo } from "./data";
+import logo from "./assets/logo.png";
 import Menu from "./components/Menu";
 import Cart from "./components/Cart";
 import PaymentModal from "./components/PaymentModal";
@@ -34,8 +35,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
-          <img src="/restaurant-demo/deliveroo-logo.png" alt="Deliveroo" height="36" />
-          <h1>roo<span style={{color:"#1a271f"}}>food</span></h1>
+          <img src={logo} alt="Greg Food" height="48" style={{objectFit:"contain"}} />
           <span className="delivery-eta">
             <span className="eta-dot" />
             <span className="eta-icon">🛵</span>
