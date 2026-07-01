@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOpenAIService } from "../services/openaiService.js";
+import { getLLMService } from "../services/llmService.js";
 
 const router = Router();
 
@@ -35,7 +35,7 @@ router.post("/chat", async (req, res, next) => {
       "Chaque message doit avoir un role et un content string"
     );
 
-    const service = getOpenAIService();
+    const service = getLLMService();
     const response = await service.chat(messages, { model, temperature, maxTokens });
 
     res.json({
@@ -66,7 +66,7 @@ router.post("/chat/stream", async (req, res, next) => {
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();
 
-    const service = getOpenAIService();
+    const service = getLLMService();
     const stream  = await service.chatStream(messages, { model, temperature, maxTokens });
 
     let usage = null;
@@ -107,7 +107,7 @@ router.post("/image", async (req, res, next) => {
     assert(typeof prompt === "string" && prompt.trim().length > 0, "prompt est requis");
     assert(!n || (Number.isInteger(n) && n >= 1 && n <= 10), "n doit être entre 1 et 10");
 
-    const service  = getOpenAIService();
+    const service  = getLLMService();
     const response = await service.generateImage(prompt.trim(), { size, quality, style, n });
 
     res.json({
@@ -138,7 +138,7 @@ router.post("/embed", async (req, res, next) => {
       "input doit être une string ou un tableau de strings"
     );
 
-    const service    = getOpenAIService();
+    const service    = getLLMService();
     const embeddings = await service.embed(input, { model });
 
     res.json({ embeddings, dimensions: embeddings[0]?.length ?? 0 });
@@ -170,7 +170,7 @@ router.post("/tools", async (req, res, next) => {
     assert(Array.isArray(messages) && messages.length > 0, "messages est requis");
     assert(Array.isArray(tools) && tools.length > 0, "tools est requis");
 
-    const service = getOpenAIService();
+    const service = getLLMService();
 
     // Exécuteur d'outil : cherche le résultat dans toolResults fourni par le client
     const result = await service.runToolLoop(
@@ -194,7 +194,7 @@ router.post("/tools", async (req, res, next) => {
  */
 router.get("/models", async (req, res, next) => {
   try {
-    const models = await getOpenAIService().listModels();
+    const models = await getLLMService().listModels();
     res.json({ models });
   } catch (err) {
     next(err);

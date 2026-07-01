@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { dishes } from "../../src/data.js";
-import { getOpenAIService } from "../services/openaiService.js";
+import { getLLMService } from "../services/llmService.js";
 
 const router = Router();
 
@@ -90,7 +90,7 @@ router.post("/", async (req, res, next) => {
       throw err;
     }
 
-    const service = getOpenAIService();
+    const service = getLLMService();
 
     const response = await service.chat(
       [
