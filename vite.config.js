@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/restaurant-demo/',
+  base: process.env.VERCEL ? '/' : '/restaurant-demo/',
   server: {
     proxy: {
       // Toutes les requêtes /api/* sont proxifiées vers le serveur Express en dev

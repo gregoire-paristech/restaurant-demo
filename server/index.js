@@ -52,11 +52,14 @@ app.use(errorHandler);
 
 // ─── Démarrage ───────────────────────────────────────────────────────────────
 
-app.listen(PORT, () => {
-  console.log(`[Server] ✓ Express démarré sur http://localhost:${PORT}`);
-  console.log(`[Server] Backend LLM  : ${process.env.LLM_BASE_URL ?? "http://localhost:11434/v1"}`);
-  console.log(`[Server] Modèle chat  : ${process.env.LLM_CHAT_MODEL  ?? "qwen2.5:7b"}`);
-  console.log(`[Server] Modèle embed : ${process.env.LLM_EMBED_MODEL ?? "nomic-embed-text"}`);
-});
+// En mode serverless (Vercel), on n'écoute pas sur un port — l'app est exportée directement
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`[Server] ✓ Express démarré sur http://localhost:${PORT}`);
+    console.log(`[Server] Backend LLM  : ${process.env.LLM_BASE_URL ?? "http://localhost:11434/v1"}`);
+    console.log(`[Server] Modèle chat  : ${process.env.LLM_CHAT_MODEL  ?? "qwen2.5:7b"}`);
+    console.log(`[Server] Modèle embed : ${process.env.LLM_EMBED_MODEL ?? "nomic-embed-text"}`);
+  });
+}
 
 export default app;
