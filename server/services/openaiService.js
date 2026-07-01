@@ -156,7 +156,7 @@ class OpenAIService {
           ...(tools       && { tools }),
           ...(toolChoice  && { tool_choice: toolChoice }),
         },
-        { timeout: timeoutMs }
+        timeoutMs != null ? { timeout: timeoutMs } : undefined
       )
     );
   }
