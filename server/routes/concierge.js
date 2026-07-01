@@ -53,7 +53,7 @@ const RECOMMEND_TOOL = {
           description: "True si des personnes différentes veulent des plats différents",
         },
         budget_per_person: {
-          type: "number",
+          type: ["number", "null"],
           description: "Budget par personne en euros si détecté, sinon null",
         },
         message: {
