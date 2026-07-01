@@ -76,7 +76,7 @@ export default function ConciergeBar({ onFillCart }) {
         <input
           className="concierge-input"
           type="text"
-          placeholder="Commande-moi un truc léger pour ce soir, j'ai Pilates après…"
+          placeholder="Que souhaitez-vous manger ?"
           value={prompt}
           disabled={loading}
           onChange={(e) => { setPrompt(e.target.value); setPreview(null); setError(null); }}
