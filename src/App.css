@@ -690,6 +690,14 @@ body {
   color: #7a9a88;
 }
 
+.concierge-error {
+  max-width: 860px;
+  margin: 10px auto 0;
+  font-size: 0.82rem;
+  color: #f87171;
+  padding: 0 4px;
+}
+
 .concierge-preview {
   max-width: 860px;
   margin: 12px auto 0;
